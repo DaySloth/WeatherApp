@@ -1,0 +1,12 @@
+#navbar span{
+    font-size: 30px;
+    margin: 0 auto;
+}
+
+input {
+    display: inline;
+}
+
+.search {
+    background-color: gray;
+}

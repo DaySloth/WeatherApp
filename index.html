@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Weather App</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+        <link rel="stylesheet" href="./assets/css/style.css" />
+    </head>
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-dark bg-dark" id="navbar">
+            <span class="navbar-brand mb-0 h1">Weather Dashboard</span>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <!-- City Search -->
+                <div class="col-4 search">
+                    <label for="city">Search for a City:</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="cityName">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit" id="submitBtn"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                    <!-- Past City Search Buttons -->
+                    <div id="pastSearch"></div>
+                </div>
+                <!-- City Weather Data Display -->
+                <div class="col-8">
+                    <div class="row">
+                        <div class="col-12">
+                            city stats
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            5 day
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Font Awesome link -->
+        <script src="https://kit.fontawesome.com/c79351aee9.js" crossorigin="anonymous"></script>
+        <!-- jQuery link -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- External JS file link -->
+        <script src="./assets/js/script.js"></script>
+
+        <script>
+            let pastCityList = [];
+
+
+            function searchForWeather(){
+                let city = $("#cityName").val();
+                pastCityList.push(city);
+                localStorage.setItem("pastCityList", JSON.stringify(pastCityList));
+                init();
+            };
+
+            function init(){
+                let storedCityData = localStorage.getItem("pastCityList");
+                if(storedCityData !== null){
+                    pastCityList = JSON.parse(storedCityData);
+                    console.log(pastCityList);
+
+                    $("#pastSearch").empty();
+                    for(var i = 0; i < pastCityList.length; i++){
+                        let cityBtn = $("<button>");
+                        cityBtn.text(pastCityList[i]);
+                        cityBtn.attr("class", "btn btn-light btn-lg btn-block mb-2");
+                        $("#pastSearch").prepend(cityBtn);
+                    };
+
+                } else {
+                    console.log("nothing in local storage");
+                };
+                
+            }
+
+            $("button").on("click", function(event){
+                event.preventDefault();
+                
+                if($(this).attr("id") === "submitBtn"){
+                    searchForWeather();
+                } else {
+                    console.log("not the submit btn")
+                }
+                
+            });
+
+            init();
+
+
+
+
+
+
+
+
+
+
+        </script>
+    </body>
+</html>
