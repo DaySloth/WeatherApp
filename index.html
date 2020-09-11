@@ -31,12 +31,18 @@
                 <div class="col-8">
                     <div class="row">
                         <div class="col-12">
-                            city stats
+                            <div class="card">
+                                <h5 class="card-title" id="cityDisplay">Chicago <span id="dateDisplay">(date)</span><i id="currentConditionDisplay"></i></h5>
+                                <p>Temperature: <span id="tempDisplay"></span> &deg;F</p>
+                                <p>Humidity: <span id="HumidityDisplay"></span>%</p>
+                                <p>Wind Speed: <span id="windSpeedDisplay"></span> MPH</p>
+                                <p>UV Index: <span id="uvIndexDisplay"></span></p>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            5 day
+                            <h5>5-Day Forecast:</h5>
                         </div>
                     </div>
                 </div>
@@ -53,13 +59,43 @@
 
         <script>
             let pastCityList = [];
-
+            let city;
 
             function searchForWeather(){
-                let city = $("#cityName").val();
-                pastCityList.push(city);
-                localStorage.setItem("pastCityList", JSON.stringify(pastCityList));
+                city = $("#cityName").val();
+                if(pastCityList.includes(city)){
+                    console.log("city already in list, not adding again")
+                } else{
+                    pastCityList.push(city);
+                    localStorage.setItem("pastCityList", JSON.stringify(pastCityList));
+                };
+                
                 init();
+
+                let queryURL = "https://api.openweathermap.org/data/2.5/weather?q="+ city +"&appid=72de2b75c6774a8a71e7061642ea7d3a"
+
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then(function(response){
+                    let lon = response.coord.lon;
+                    let lat = response.coord.lat;
+
+                    $.ajax({
+                        url: "https://api.openweathermap.org/data/2.5/onecall?lat="+ lat +"&lon="+ lon + "&exclude=hourly,minutely&appid=72de2b75c6774a8a71e7061642ea7d3a",
+                        method: "GET"
+                    }).then(function(response){
+                        let fTemp = Math.round(Math.floor(response.current.temp) * 9/5 - 459.67);
+                        let currentHum = response.current.humidity;
+                        let wind = response.current.wind_speed;
+                        let uvi = response.current.uvi;
+                        console.log("temp: " + fTemp);
+                        console.log("humidity: " + currentHum);
+                        console.log("uvi: "+ uvi)
+                        console.log(response);
+                    })
+                    
+                });
             };
 
             function init(){
