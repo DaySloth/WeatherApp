@@ -62,9 +62,11 @@
         <script>
             let pastCityList = [];
             let city;
+            let lat;
+            let lon;
 
-            function searchForWeather(){
-                city = $("#cityName").val();
+            function searchForWeather(userinput){
+                city = userinput;
                 if(pastCityList.includes(city)){
                     console.log("city already in list, not adding again")
                 } else{
@@ -81,10 +83,16 @@
                     method: "GET"
                 }).then(function(response){
                     //records the lon and lat of the city searched to use in another ajax call
-                    let lon = response.coord.lon;
-                    let lat = response.coord.lat;
+                    lon = response.coord.lon;
+                    lat = response.coord.lat;
 
-                    $.ajax({
+                    callWeatherData();
+                    
+                });
+            };
+
+            function callWeatherData(){
+                $.ajax({
                         url: "https://api.openweathermap.org/data/2.5/onecall?lat="+ lat +"&lon="+ lon + "&exclude=hourly,minutely&appid=72de2b75c6774a8a71e7061642ea7d3a",
                         method: "GET"
                     }).then(function(response){
@@ -119,11 +127,10 @@
                         console.log("uvi: "+ uvi);
                         console.log("condition Icon: "+ conditionIcon);
                         console.log(response);
-                    })
-                    
-                });
+                    });
             };
 
+            // 
             function init(){
                 let storedCityData = localStorage.getItem("pastCityList");
                 if(storedCityData !== null){
@@ -134,30 +141,74 @@
                     for(var i = 0; i < pastCityList.length; i++){
                         let cityBtn = $("<button>");
                         cityBtn.text(pastCityList[i]);
-                        cityBtn.attr("class", "btn btn-light btn-lg btn-block mb-2");
+                        cityBtn.attr("class", "btn btn-light btn-sm btn-block mb-2");
                         $("#pastSearch").prepend(cityBtn);
                     };
-
                 } else {
-                    console.log("nothing in local storage");
+                    getLocation();
                 };
-                
-            }
+            };
+            //gets current location if you don't have any previously searched city in storage
+            function getLocation() {
+                // Make sure browser supports this feature
+                if (navigator.geolocation) {
+                    // Provide our showPosition() function to getCurrentPosition
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                } 
+                else {
+                    console.log("Geolocation is not supported by this browser.");
+                }
+            };
+
+            // This will get called after getCurrentPosition()
+            function showPosition(position) {
+                // Grab coordinates from the given object
+                lat = position.coords.latitude;
+                lon = position.coords.longitude;
+                console.log("Your coordinates are Latitude: " + lat + " Longitude " + lon);
+                googleGeoCode();
+
+            };
+
+            // calls a google geocode to grab the current city name from lat and lon
+            function googleGeoCode(){
+                var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "https://google-maps-geocoding.p.rapidapi.com/geocode/json?language=en&latlng="+ lat +","+ lon,
+                "method": "GET",
+                "headers": {
+                    "x-rapidapi-host": "google-maps-geocoding.p.rapidapi.com",
+                    "x-rapidapi-key": "9493df4a93msh1173120d859372ap12bb8ajsnff91615f339b"
+                },
+            };
+
+            $.ajax(settings).done(function (response) {
+                city = response.results[5].address_components[0].long_name;
+                callWeatherData();
+                });
+            };
 
             $("button").on("click", function(event){
                 event.preventDefault();
                 
                 if($(this).attr("id") === "submitBtn"){
-                    searchForWeather();
+                    searchForWeather($("#cityName").val());
                 } else {
                     console.log("not the submit btn")
                 }
                 
             });
 
+            
+            
             init();
-
-
+            if(pastCityList[0] !== undefined){
+                console.log("Last Item Searched: "+pastCityList[pastCityList.length - 1]);
+                searchForWeather(pastCityList[pastCityList.length - 1]);
+            } else {
+                console.log("pastCityList array was empty, getting current location");
+            }
 
 
 
