@@ -34,7 +34,7 @@
                             <div class="card">
                                 <h5 class="card-title"><span id="cityDisplay"></span> <span id="dateDisplay"></span><i id="currentConditionDisplay"></i></h5>
                                 <p>Temperature: <span id="tempDisplay"></span> &deg;F</p>
-                                <p>Humidity: <span id="HumidityDisplay"></span>%</p>
+                                <p>Humidity: <span id="humidityDisplay"></span>%</p>
                                 <p>Wind Speed: <span id="windSpeedDisplay"></span> MPH</p>
                                 <p>UV Index: <span id="uvIndexDisplay"></span></p>
                             </div>
@@ -96,6 +96,11 @@
 
                         $("#cityDisplay").text(city);
                         $("#dateDisplay").text("(" + moment().format('l') + ")");
+                        $("#tempDisplay").text(fTemp);
+                        $("#humidityDisplay").text(currentHum);
+                        $("#windSpeedDisplay").text(wind);
+                        $("#uvIndexDisplay").text(uvi);
+
 
                         console.log("temp: " + fTemp);
                         console.log("humidity: " + currentHum);
