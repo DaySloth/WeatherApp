@@ -10,3 +10,7 @@ input {
 .search {
     background-color: gray;
 }
+
+.badge-orange {
+    background-color: #ff9100;
+}

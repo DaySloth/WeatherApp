@@ -91,15 +91,26 @@
                         let fTemp = Math.round(Math.floor(response.current.temp) * 9/5 - 459.67);
                         let currentHum = response.current.humidity;
                         let wind = response.current.wind_speed;
-                        let uvi = response.current.uvi;
+                        let uvi = parseInt(response.current.uvi);
                         let condition = response.current.weather[0].main;
 
+                        let uvDisplay = $("#uvIndexDisplay");
                         $("#cityDisplay").text(city);
                         $("#dateDisplay").text("(" + moment().format('l') + ")");
                         $("#tempDisplay").text(fTemp);
                         $("#humidityDisplay").text(currentHum);
                         $("#windSpeedDisplay").text(wind);
-                        $("#uvIndexDisplay").text(uvi);
+                        uvDisplay.text(uvi);
+
+                        if(uvi < 3){
+                            uvDisplay.attr("class", "badge badge-success")
+                        } else if(3 < uvi && uvi < 6){
+                            uvDisplay.attr("class", "badge badge-warning")
+                        } else if(6 < uvi && uvi < 7){
+                            uvDisplay.attr("class", "badge badge-orange")
+                        } else {
+                            uvDisplay.attr("class", "badge badge-danger")
+                        };
 
 
                         console.log("temp: " + fTemp);
