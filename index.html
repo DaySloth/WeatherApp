@@ -32,7 +32,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
-                                <h5 class="card-title"><span id="cityDisplay"></span> <span id="dateDisplay"></span><i id="currentConditionDisplay"></i></h5>
+                                <h5 class="card-title"><span id="cityDisplay"></span> <span id="dateDisplay"></span><img id="currentConditionDisplay"></img></h5>
                                 <p>Temperature: <span id="tempDisplay"></span> &deg;F</p>
                                 <p>Humidity: <span id="humidityDisplay"></span>%</p>
                                 <p>Wind Speed: <span id="windSpeedDisplay"></span> MPH</p>
@@ -92,11 +92,12 @@
                         let currentHum = response.current.humidity;
                         let wind = response.current.wind_speed;
                         let uvi = parseInt(response.current.uvi);
-                        let condition = response.current.weather[0].main;
-
+                        let conditionIcon = response.current.weather[0].icon;
+                        let condition = "http://openweathermap.org/img/wn/"+ conditionIcon +"@2x.png";
                         let uvDisplay = $("#uvIndexDisplay");
                         $("#cityDisplay").text(city);
                         $("#dateDisplay").text("(" + moment().format('l') + ")");
+                        $("#currentConditionDisplay").attr("src", condition)
                         $("#tempDisplay").text(fTemp);
                         $("#humidityDisplay").text(currentHum);
                         $("#windSpeedDisplay").text(wind);
@@ -116,7 +117,7 @@
                         console.log("temp: " + fTemp);
                         console.log("humidity: " + currentHum);
                         console.log("uvi: "+ uvi);
-                        console.log("condition: "+ condition);
+                        console.log("condition Icon: "+ conditionIcon);
                         console.log(response);
                     })
                     
