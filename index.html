@@ -32,7 +32,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
-                                <h5 class="card-title" id="cityDisplay">Chicago <span id="dateDisplay">(date)</span><i id="currentConditionDisplay"></i></h5>
+                                <h5 class="card-title"><span id="cityDisplay"></span> <span id="dateDisplay"></span><i id="currentConditionDisplay"></i></h5>
                                 <p>Temperature: <span id="tempDisplay"></span> &deg;F</p>
                                 <p>Humidity: <span id="HumidityDisplay"></span>%</p>
                                 <p>Wind Speed: <span id="windSpeedDisplay"></span> MPH</p>
@@ -54,6 +54,8 @@
         <script src="https://kit.fontawesome.com/c79351aee9.js" crossorigin="anonymous"></script>
         <!-- jQuery link -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Moment.js link-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
         <!-- External JS file link -->
         <script src="./assets/js/script.js"></script>
 
@@ -78,6 +80,7 @@
                     url: queryURL,
                     method: "GET"
                 }).then(function(response){
+                    //records the lon and lat of the city searched to use in another ajax call
                     let lon = response.coord.lon;
                     let lat = response.coord.lat;
 
@@ -89,9 +92,15 @@
                         let currentHum = response.current.humidity;
                         let wind = response.current.wind_speed;
                         let uvi = response.current.uvi;
+                        let condition = response.current.weather[0].main;
+
+                        $("#cityDisplay").text(city);
+                        $("#dateDisplay").text("(" + moment().format('l') + ")");
+
                         console.log("temp: " + fTemp);
                         console.log("humidity: " + currentHum);
-                        console.log("uvi: "+ uvi)
+                        console.log("uvi: "+ uvi);
+                        console.log("condition: "+ condition);
                         console.log(response);
                     })
                     
