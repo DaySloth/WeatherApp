@@ -14,3 +14,7 @@ input {
 .badge-orange {
     background-color: #ff9100;
 }
+
+#currentConditionDisplay {
+    width: 60px;
+};
