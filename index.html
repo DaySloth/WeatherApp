@@ -10,7 +10,9 @@
     <body>
         <!-- Navbar -->
         <nav class="navbar navbar-dark bg-dark" id="navbar">
+            <div><i id="currentLocation" class="fas fa-map-marked-alt navbar-brand"></i></div>
             <span class="navbar-brand mb-0 h1">Weather Dashboard</span>
+            
         </nav>
 
         <div class="container-fluid">
@@ -62,23 +64,28 @@
         <script src="./assets/js/script.js"></script>
 
         <script>
+            //Global Variables to be called later on
             let pastCityList = [];
             let city;
             let lat;
             let lon;
 
-
+            //Uses ajax to take the users input to search for the city specified
             function searchForWeather(userinput){
+                //sets city to the userinput argument taken in on function call
                 city = userinput;
+                //checks the list to see if the city already exists
                 if(pastCityList.includes(city)){
                     console.log("city already in list, not adding again")
+                //if it doesn't exist it will add it to the list
                 } else{
                     pastCityList.push(city);
                     localStorage.setItem("pastCityList", JSON.stringify(pastCityList));
                 };
-                
+                //runs init to load in the buttons
                 init();
 
+                //api query to get the lon and lat of the city, this will be used in the callWeatherData function
                 let queryURL = "https://api.openweathermap.org/data/2.5/weather?q="+ city +"&appid=72de2b75c6774a8a71e7061642ea7d3a"
 
                 $.ajax({
@@ -88,18 +95,19 @@
                     //records the lon and lat of the city searched to use in another ajax call
                     lon = response.coord.lon;
                     lat = response.coord.lat;
-
+                    //calls the callWeatherData function to load in the weather data
                     callWeatherData();
                     
                 });
             };
 
-
+            //api query to get selected city weather data
             function callWeatherData(){
                 $.ajax({
                         url: "https://api.openweathermap.org/data/2.5/onecall?lat="+ lat +"&lon="+ lon + "&exclude=hourly,minutely&appid=72de2b75c6774a8a71e7061642ea7d3a",
                         method: "GET"
                     }).then(function(response){
+                        //gets variables to be used from returned object
                         let fTemp = Math.round(Math.floor(response.current.temp) * 9/5 - 459.67);
                         let currentHum = response.current.humidity;
                         let wind = response.current.wind_speed;
@@ -107,6 +115,8 @@
                         let conditionIcon = response.current.weather[0].icon;
                         let condition = "http://openweathermap.org/img/wn/"+ conditionIcon +"@2x.png";
                         let uvDisplay = $("#uvIndexDisplay");
+
+                        //sets info to the screen
                         $("#cityDisplay").text(city);
                         $("#dateDisplay").text("(" + moment().format('l') + ")");
                         $("#currentConditionDisplay").attr("src", condition)
@@ -115,6 +125,7 @@
                         $("#windSpeedDisplay").text(wind);
                         uvDisplay.text(uvi);
 
+                        //checks the value of the uv index and sets a color badge accordingly to how safe it is
                         if(uvi < 3){
                             uvDisplay.attr("class", "badge badge-success")
                         } else if(3 < uvi && uvi < 6){
@@ -125,7 +136,7 @@
                             uvDisplay.attr("class", "badge badge-danger")
                         };
 
-
+                        //console logs the values it pulls
                         console.log("temp: " + fTemp);
                         console.log("humidity: " + currentHum);
                         console.log("uvi: "+ uvi);
@@ -134,20 +145,23 @@
                     });
             };
 
-
+            //initialize the page
             function init(){
+                //pulls from local storage to get the list
                 let storedCityData = localStorage.getItem("pastCityList");
+                //checks if the list is empty
                 if(storedCityData !== null){
                     pastCityList = JSON.parse(storedCityData);
-                    console.log(pastCityList);
-
+                    //empties the div to add in the updated buttons
                     $("#pastSearch").empty();
+                    //runs through the array and adds buttons accordingly
                     for(var i = 0; i < pastCityList.length; i++){
                         let cityBtn = $("<button>");
                         cityBtn.text(pastCityList[i]);
                         cityBtn.attr("class", "btn btn-light btn-sm btn-block mb-2");
                         $("#pastSearch").prepend(cityBtn);
                     };
+                //if the list is empty it will get the current location and display your current locations weather data
                 } else {
                     getLocation();
                 };
@@ -164,17 +178,20 @@
                 }
             };
 
-            // This will get called after getCurrentPosition()
+            // This will get called after getLocation()
             function showPosition(position) {
                 // Grab coordinates from the given object
                 lat = position.coords.latitude;
                 lon = position.coords.longitude;
+                //logs your coordinates to let you know it worked
                 console.log("Your coordinates are Latitude: " + lat + " Longitude " + lon);
+                //calls a googleGeoCode() reverse lookup to get city name to search
                 googleGeoCode();
 
             };
 
             // calls a google geocode to grab the current city name from lat and lon
+            //ONLY CALLED IF NO DATA IS IN THE LOCAL STORAGE
             function googleGeoCode(){
                 var settings = {
                 "async": true,
@@ -203,6 +220,14 @@
                 };
             });
             
+            $("#pastSearch").on("click", ".btn", function(event){
+                searchForWeather($(this).text());
+            });
+
+            $("#currentLocation").on("click", function(event){
+                getLocation();
+            })
+
             init();
             if(pastCityList[0] !== undefined){
                 console.log("Last Item Searched: "+pastCityList[pastCityList.length - 1]);
@@ -211,9 +236,7 @@
                 console.log("pastCityList array was empty, getting current location");
             };
 
-            $("#pastSearch").on("click", ".btn", function(event){
-                searchForWeather($(this).text());
-            });
+            
 
 
 
