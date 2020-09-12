@@ -15,10 +15,10 @@
             
         </nav>
 
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
                 <!-- City Search -->
-                <div class="col-4 search">
+                <div class="col-sm-4 search">
                     <label for="city">Search for a City:</label>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="cityName">
@@ -32,11 +32,11 @@
                     <div id="pastSearch"></div>
                 </div>
                 <!-- City Weather Data Display -->
-                <div class="col-8">
+                <div class="col-sm-8">
                     <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <h5 class="card-title"><span id="cityDisplay"></span> <span id="dateDisplay"></span><img id="currentConditionDisplay"></img></h5>
+                        <div class="col-lg-12">
+                            <div class="card current-weather-card">
+                                <h4 class="card-title"><span id="cityDisplay"></span> <span id="dateDisplay"></span><img id="currentConditionDisplay" class="weatherIcon"></img></h4>
                                 <p>Temperature: <span id="tempDisplay"></span> &deg;F</p>
                                 <p>Humidity: <span id="humidityDisplay"></span>%</p>
                                 <p>Wind Speed: <span id="windSpeedDisplay"></span> MPH</p>
@@ -44,9 +44,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <h5>5-Day Forecast:</h5>
+                    <div class="row future-forecast">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <h5>5-Day Forecast:</h5>
+                            </div>
+                            <div class="row" id="futureForecastDiv"></div>
                         </div>
                     </div>
                 </div>
@@ -135,6 +138,22 @@
                         } else {
                             uvDisplay.attr("class", "badge badge-danger")
                         };
+
+                        //Future Forecast cards
+                        $("#futureForecastDiv").empty();
+                        for(let i = 0; i < 5; i++){
+                            let dailyCond = response.daily[i].weather[0].icon;
+                            let condURL = "http://openweathermap.org/img/wn/"+ dailyCond +"@2x.png";
+                            let dailyTemp = Math.round(Math.floor(response.daily[i].temp.max) * 9/5 - 459.67);
+                            let dailyHum = response.daily[i].humidity;
+                            let cardDiv = $("<div>");
+                            cardDiv.attr("class", "card weather-card col-lg-2");
+                            cardDiv.append($("<p>").text(moment().add(i + 1, 'days').format('l')).attr("class", "forecast-title card-title"));
+                            cardDiv.append($("<img>").attr("src", condURL).attr("class", "weatherIcon"));
+                            cardDiv.append($("<p>").html("Temp: " + dailyTemp + " &deg;F"));
+                            cardDiv.append($("<p>").html("Humidity: " + dailyHum + " %"));
+                            $("#futureForecastDiv").append(cardDiv);
+                        }
 
                         //console logs the values it pulls
                         console.log("temp: " + fTemp);
