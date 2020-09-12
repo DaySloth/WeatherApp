@@ -193,10 +193,21 @@
                 event.preventDefault();
                 
                 if($(this).attr("id") === "submitBtn"){
-                    searchForWeather($("#cityName").val());
-                } else {
-                    console.log("not the submit btn")
-                }
+                    if($("#cityName").val() === ""){
+                        console.log("no input")
+                    } else {
+                        searchForWeather($("#cityName").val());
+                    }
+                };
+                
+            });
+
+            $("#pastSearch").on("click", function(event){
+                event.preventDefault();
+                if(typeof $(this).text() === "string"){
+                    searchForWeather($(this).text());
+                };
+                
                 
             });
 
@@ -208,7 +219,7 @@
                 searchForWeather(pastCityList[pastCityList.length - 1]);
             } else {
                 console.log("pastCityList array was empty, getting current location");
-            }
+            };
 
 
 
