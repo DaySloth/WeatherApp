@@ -21,7 +21,9 @@
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="cityName">
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit" id="submitBtn"><i class="fas fa-search"></i></button>
+                            <form>
+                                <button class="btn btn-primary" type="submit" id="submitBtn"><i class="fas fa-search"></i></button>
+                            </form>
                         </div>
                     </div>
                     <!-- Past City Search Buttons -->
@@ -65,6 +67,7 @@
             let lat;
             let lon;
 
+
             function searchForWeather(userinput){
                 city = userinput;
                 if(pastCityList.includes(city)){
@@ -90,6 +93,7 @@
                     
                 });
             };
+
 
             function callWeatherData(){
                 $.ajax({
@@ -130,7 +134,7 @@
                     });
             };
 
-            // 
+
             function init(){
                 let storedCityData = localStorage.getItem("pastCityList");
                 if(storedCityData !== null){
@@ -190,8 +194,6 @@
             };
 
             $("button").on("click", function(event){
-                event.preventDefault();
-                
                 if($(this).attr("id") === "submitBtn"){
                     if($("#cityName").val() === ""){
                         console.log("no input")
@@ -199,19 +201,7 @@
                         searchForWeather($("#cityName").val());
                     }
                 };
-                
             });
-
-            $("#pastSearch").on("click", function(event){
-                event.preventDefault();
-                if(typeof $(this).text() === "string"){
-                    searchForWeather($(this).text());
-                };
-                
-                
-            });
-
-            
             
             init();
             if(pastCityList[0] !== undefined){
@@ -221,6 +211,9 @@
                 console.log("pastCityList array was empty, getting current location");
             };
 
+            $("#pastSearch").on("click", ".btn", function(event){
+                searchForWeather($(this).text());
+            });
 
 
 
