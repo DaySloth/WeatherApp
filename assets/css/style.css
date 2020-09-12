@@ -1,3 +1,9 @@
+/* body styling */
+body {
+    font-family: 'Ubuntu', sans-serif, helvetica, Arial;
+}
+
+/* NavBar styling */
 #navbar span{
     font-size: 30px;
     margin: 0 auto;
@@ -7,19 +13,23 @@
     cursor: pointer;
 }
 
+/* Search Bar styling */
 .search {
     background-color: #cccccc;
     padding: 20px;
 }
 
-.badge-orange {
-    background-color: #ff9100;
-}
+/* Current weather styling */
 .current-weather-card {
     padding: 10px;
     margin: 15px;
 }
 
+.badge-orange {
+    background-color: #ff9100;
+}
+
+/* future forecast card styling */
 .future-forecast {
     padding: 10px;
     text-align: center;
@@ -47,6 +57,7 @@
     margin: 10px;
 }
 
+/* Weather icons styling */
 .weatherIcon {
     width: 60px;
 }
